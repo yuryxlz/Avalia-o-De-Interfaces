@@ -1,0 +1,692 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --fx-bg:#0A0A0F;--fx-surface:#13131A;--fx-card:#1C1C26;
+    --fx-red:#E8332A;--fx-red-dim:#B02820;--fx-gold:#F5C842;
+    --fx-text:#F2F2F5;--fx-muted:#8A8A9E;--fx-subtle:#3A3A4E;
+    --fx-font:'DM Sans',sans-serif;--fx-display:'Bebas Neue',sans-serif;
+  }
+  body{background:transparent;font-family:var(--fx-font)}
+  .wrapper{display:flex;flex-direction:column;align-items:center;gap:24px;padding:24px 0}
+  .nav-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .nav-btn{
+    background:var(--fx-surface);border:1.5px solid var(--fx-subtle);
+    color:var(--fx-muted);padding:8px 18px;border-radius:20px;
+    font-family:var(--fx-font);font-size:13px;cursor:pointer;transition:all .2s;
+  }
+  .nav-btn.active,.nav-btn:hover{
+    background:var(--fx-red);border-color:var(--fx-red);color:#fff;
+  }
+  .phone-frame{
+    width:360px;height:740px;background:var(--fx-bg);border-radius:40px;
+    border:2.5px solid var(--fx-subtle);overflow:hidden;position:relative;
+    box-shadow:0 0 0 6px var(--fx-surface);
+  }
+  .screen{position:absolute;inset:0;overflow:hidden;display:none;flex-direction:column}
+  .screen.active{display:flex}
+
+  /* STATUS BAR */
+  .status-bar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px 20px 6px;background:var(--fx-bg);font-size:11px;
+    color:var(--fx-muted);flex-shrink:0;
+  }
+  .status-icons{display:flex;gap:4px;align-items:center}
+  .bar{width:3px;border-radius:1px;background:var(--fx-text)}
+  .bar:nth-child(1){height:6px}
+  .bar:nth-child(2){height:9px}
+  .bar:nth-child(3){height:12px}
+  .bar:nth-child(4){height:15px}
+
+  /* HOME SCREEN */
+  .home-header{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:12px 20px 10px;flex-shrink:0;
+  }
+  .logo{font-family:var(--fx-display);font-size:28px;color:var(--fx-red);letter-spacing:1px}
+  .avatar{
+    width:36px;height:36px;border-radius:50%;background:var(--fx-red);
+    display:flex;align-items:center;justify-content:center;
+    font-size:14px;font-weight:600;color:#fff;cursor:pointer;
+    border:2px solid var(--fx-red-dim);
+  }
+  .scroll-area{flex:1;overflow-y:auto;padding-bottom:80px}
+  .scroll-area::-webkit-scrollbar{display:none}
+
+  /* HERO */
+  .hero{
+    margin:0 20px 20px;border-radius:16px;overflow:hidden;
+    position:relative;height:200px;background:linear-gradient(135deg,#1a0a2e,#2d0a1a,#1a1a2e);
+    cursor:pointer;
+  }
+  .hero-badge{
+    position:absolute;top:12px;left:12px;background:var(--fx-red);
+    color:#fff;font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;
+    letter-spacing:.5px;
+  }
+  .hero-content{
+    position:absolute;bottom:0;left:0;right:0;padding:16px;
+    background:linear-gradient(transparent,rgba(10,10,15,.95));
+  }
+  .hero-title{font-family:var(--fx-display);font-size:26px;color:var(--fx-text);letter-spacing:.5px;margin-bottom:4px}
+  .hero-meta{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+  .hero-meta span{font-size:11px;color:var(--fx-muted)}
+  .hero-meta .dot{width:3px;height:3px;border-radius:50%;background:var(--fx-muted)}
+  .hero-stars{color:var(--fx-gold);font-size:11px}
+  .hero-btns{display:flex;gap:8px}
+  .btn-play{
+    background:var(--fx-text);color:var(--fx-bg);border:none;
+    padding:8px 20px;border-radius:8px;font-weight:600;font-size:13px;
+    display:flex;align-items:center;gap:6px;cursor:pointer;font-family:var(--fx-font);
+  }
+  .btn-play::before{content:'▶';font-size:10px}
+  .btn-list{
+    background:rgba(242,242,245,.15);color:var(--fx-text);border:1px solid rgba(242,242,245,.3);
+    padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;font-family:var(--fx-font);
+  }
+  /* HERO decorative shapes */
+  .hero-deco{position:absolute;inset:0;pointer-events:none}
+  .hero-deco circle{opacity:.3}
+
+  /* SECTION */
+  .section-header{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:0 20px 12px;
+  }
+  .section-title{font-size:16px;font-weight:600;color:var(--fx-text)}
+  .section-see{font-size:12px;color:var(--fx-red);cursor:pointer}
+
+  /* CARDS ROW */
+  .cards-row{
+    display:flex;gap:10px;padding:0 20px;overflow-x:auto;
+    padding-bottom:4px;margin-bottom:20px;
+  }
+  .cards-row::-webkit-scrollbar{display:none}
+  .movie-card{
+    flex-shrink:0;width:110px;cursor:pointer;
+  }
+  .movie-poster{
+    width:110px;height:155px;border-radius:10px;
+    overflow:hidden;position:relative;
+  }
+  .poster-img{
+    width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+    font-size:36px;
+  }
+  .poster-rating{
+    position:absolute;bottom:6px;right:6px;
+    background:rgba(10,10,15,.85);border-radius:5px;
+    padding:2px 5px;font-size:10px;color:var(--fx-gold);font-weight:600;
+  }
+  .movie-title{font-size:11px;color:var(--fx-text);margin-top:6px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+  .movie-genre{font-size:10px;color:var(--fx-muted);margin-top:2px}
+
+  /* BOTTOM NAV */
+  .bottom-nav{
+    position:absolute;bottom:0;left:0;right:0;
+    background:rgba(10,10,15,.97);border-top:1px solid var(--fx-subtle);
+    display:flex;justify-content:space-around;align-items:center;
+    padding:10px 0 20px;
+  }
+  .nav-item{
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    cursor:pointer;padding:4px 10px;
+  }
+  .nav-icon{font-size:18px;line-height:1}
+  .nav-label{font-size:9px;color:var(--fx-muted);font-weight:500}
+  .nav-item.active .nav-label{color:var(--fx-red)}
+  .nav-item.active .nav-icon{filter:none}
+  .nav-dot{width:4px;height:4px;border-radius:50%;background:var(--fx-red);margin:0 auto}
+
+  /* SEARCH SCREEN */
+  .search-bar-wrap{padding:10px 20px;flex-shrink:0}
+  .search-input{
+    width:100%;background:var(--fx-card);border:1px solid var(--fx-subtle);
+    border-radius:12px;padding:11px 16px 11px 40px;
+    color:var(--fx-text);font-size:14px;font-family:var(--fx-font);
+    position:relative;
+  }
+  .search-wrap-inner{position:relative}
+  .search-icon{
+    position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    color:var(--fx-muted);font-size:15px;pointer-events:none;
+  }
+  .genre-chips{display:flex;gap:8px;padding:0 20px 16px;flex-wrap:wrap;flex-shrink:0}
+  .chip{
+    background:var(--fx-card);border:1px solid var(--fx-subtle);
+    border-radius:20px;padding:6px 14px;font-size:12px;color:var(--fx-muted);cursor:pointer;
+  }
+  .chip.sel{background:var(--fx-red);border-color:var(--fx-red);color:#fff}
+  .results-grid{
+    display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;
+    padding:0 20px;overflow-y:auto;padding-bottom:90px;
+  }
+  .results-grid::-webkit-scrollbar{display:none}
+  .grid-card{cursor:pointer}
+  .grid-poster{
+    width:100%;aspect-ratio:2/3;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;font-size:28px;
+    position:relative;overflow:hidden;
+  }
+  .grid-title{font-size:10px;color:var(--fx-text);margin-top:5px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  /* DETAILS SCREEN */
+  .detail-hero{
+    height:220px;position:relative;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:64px;
+  }
+  .detail-back{
+    position:absolute;top:12px;left:12px;width:34px;height:34px;
+    background:rgba(10,10,15,.7);border-radius:50%;display:flex;
+    align-items:center;justify-content:center;cursor:pointer;
+    font-size:14px;color:var(--fx-text);border:1px solid var(--fx-subtle);
+  }
+  .detail-overlay{
+    position:absolute;bottom:0;left:0;right:0;
+    background:linear-gradient(transparent,var(--fx-bg));height:80px;
+  }
+  .detail-body{flex:1;overflow-y:auto;padding:0 20px 100px}
+  .detail-body::-webkit-scrollbar{display:none}
+  .detail-title{font-family:var(--fx-display);font-size:30px;color:var(--fx-text);margin-bottom:8px;letter-spacing:.5px}
+  .detail-meta-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+  .tag{background:var(--fx-card);border:1px solid var(--fx-subtle);
+    border-radius:5px;padding:3px 8px;font-size:11px;color:var(--fx-muted)}
+  .tag.red{background:rgba(232,51,42,.15);border-color:var(--fx-red);color:var(--fx-red)}
+  .rating-big{font-size:14px;color:var(--fx-gold);font-weight:600}
+  .detail-desc{font-size:13px;color:var(--fx-muted);line-height:1.7;margin-bottom:20px}
+  .detail-section{font-size:14px;font-weight:600;color:var(--fx-text);margin-bottom:10px}
+  .cast-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:4px;margin-bottom:20px}
+  .cast-row::-webkit-scrollbar{display:none}
+  .cast-item{flex-shrink:0;text-align:center}
+  .cast-avatar{
+    width:52px;height:52px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;margin-bottom:4px;background:var(--fx-card);
+  }
+  .cast-name{font-size:10px;color:var(--fx-muted);max-width:54px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .btn-play-full{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    background:var(--fx-red);color:#fff;border:none;border-radius:12px;
+    padding:14px;width:100%;font-size:15px;font-weight:600;
+    cursor:pointer;font-family:var(--fx-font);margin-bottom:10px;
+  }
+  .btn-list-full{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    background:var(--fx-card);color:var(--fx-text);border:1px solid var(--fx-subtle);
+    border-radius:12px;padding:13px;width:100%;font-size:14px;
+    cursor:pointer;font-family:var(--fx-font);
+  }
+
+  /* PLAYER SCREEN */
+  .player-bg{
+    width:100%;height:220px;background:#000;display:flex;
+    align-items:center;justify-content:center;position:relative;flex-shrink:0;
+  }
+  .play-circle{
+    width:60px;height:60px;border-radius:50%;
+    background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.5);
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;color:#fff;cursor:pointer;
+  }
+  .player-back{
+    position:absolute;top:12px;left:12px;width:34px;height:34px;
+    background:rgba(0,0,0,.6);border-radius:50%;display:flex;
+    align-items:center;justify-content:center;cursor:pointer;
+    font-size:14px;color:#fff;
+  }
+  .player-menu{
+    position:absolute;top:12px;right:12px;width:34px;height:34px;
+    background:rgba(0,0,0,.6);border-radius:50%;display:flex;
+    align-items:center;justify-content:center;cursor:pointer;
+    font-size:18px;color:#fff;letter-spacing:1px;
+  }
+  .progress-area{padding:16px 20px;flex-shrink:0;background:var(--fx-surface)}
+  .time-row{display:flex;justify-content:space-between;font-size:11px;color:var(--fx-muted);margin-bottom:8px}
+  .progress-bar{
+    width:100%;height:4px;background:var(--fx-subtle);border-radius:2px;
+    position:relative;cursor:pointer;margin-bottom:16px;
+  }
+  .progress-fill{width:35%;height:100%;background:var(--fx-red);border-radius:2px;position:relative}
+  .progress-thumb{
+    width:14px;height:14px;border-radius:50%;background:var(--fx-text);
+    position:absolute;right:-7px;top:-5px;box-shadow:0 1px 4px rgba(0,0,0,.4);
+  }
+  .player-controls{
+    display:flex;justify-content:space-around;align-items:center;
+    padding:0 30px;
+  }
+  .ctrl-btn{
+    width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+    font-size:20px;color:var(--fx-muted);cursor:pointer;
+  }
+  .ctrl-btn.main{
+    width:56px;height:56px;background:var(--fx-red);border-radius:50%;
+    color:#fff;font-size:22px;
+  }
+  .player-body{flex:1;overflow-y:auto;padding:16px 20px;padding-bottom:90px}
+  .player-body::-webkit-scrollbar{display:none}
+  .player-title{font-family:var(--fx-display);font-size:22px;color:var(--fx-text);margin-bottom:4px}
+  .player-ep{font-size:12px;color:var(--fx-muted);margin-bottom:16px}
+  .ep-section{font-size:14px;font-weight:600;color:var(--fx-text);margin-bottom:10px}
+  .ep-row{display:flex;gap:10px;margin-bottom:10px;cursor:pointer}
+  .ep-thumb{
+    width:90px;height:54px;border-radius:8px;background:var(--fx-card);
+    flex-shrink:0;display:flex;align-items:center;justify-content:center;
+    font-size:22px;position:relative;overflow:hidden;
+  }
+  .ep-playing{
+    position:absolute;inset:0;background:rgba(232,51,42,.35);
+    display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;
+  }
+  .ep-info{flex:1;min-width:0}
+  .ep-title{font-size:12px;font-weight:600;color:var(--fx-text);margin-bottom:2px}
+  .ep-duration{font-size:11px;color:var(--fx-muted)}
+  .ep-desc{font-size:11px;color:var(--fx-muted);margin-top:2px;
+    overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-overflow:clip}
+</style>
+
+<div class="wrapper">
+<h2 class="sr-only">Protótipo navegável do aplicativo Filmeflix com quatro telas: Home, Busca, Detalhes e Player.</h2>
+
+<div class="nav-row">
+  <button class="nav-btn active" onclick="showScreen('home',this)">🏠 Home</button>
+  <button class="nav-btn" onclick="showScreen('search',this)">🔍 Busca</button>
+  <button class="nav-btn" onclick="showScreen('details',this)">🎬 Detalhes</button>
+  <button class="nav-btn" onclick="showScreen('player',this)">▶ Player</button>
+</div>
+
+<div class="phone-frame">
+
+  <!-- HOME -->
+  <div class="screen active" id="screen-home">
+    <div class="status-bar">
+      <span>09:41</span>
+      <div class="status-icons">
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        <span style="margin-left:4px">🔋</span>
+      </div>
+    </div>
+    <div class="home-header">
+      <div class="logo">FILMEFLIX</div>
+      <div class="avatar" onclick="showScreen('profile',document.querySelector('.nav-btn'))">YA</div>
+    </div>
+    <div class="scroll-area">
+      <div class="hero" onclick="showScreen('details',document.querySelectorAll('.nav-btn')[2])">
+        <svg class="hero-deco" viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="260" cy="40" r="70" fill="#E8332A"/>
+          <circle cx="60" cy="160" r="50" fill="#7B2FBE"/>
+          <circle cx="300" cy="150" r="40" fill="#1A4A8A"/>
+        </svg>
+        <div class="hero-badge">DESTAQUE</div>
+        <div class="hero-content">
+          <div class="hero-title">COSMOS: ALÉM DO TEMPO</div>
+          <div class="hero-meta">
+            <div class="hero-stars">★★★★½</div>
+            <div class="dot"></div><span>2024</span>
+            <div class="dot"></div><span>Sci-Fi</span>
+            <div class="dot"></div><span>2h 18m</span>
+          </div>
+          <div class="hero-btns">
+            <button class="btn-play">Assistir</button>
+            <button class="btn-list">+ Lista</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-title">Continue Assistindo</span>
+        <span class="section-see">Ver tudo</span>
+      </div>
+      <div class="cards-row">
+        <div class="movie-card" onclick="showScreen('player',document.querySelectorAll('.nav-btn')[3])">
+          <div class="movie-poster" style="background:linear-gradient(135deg,#1a2a4a,#2d1a3a)">
+            <div class="poster-img">🚀</div>
+            <div class="poster-rating">⭐ 9.1</div>
+            <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--fx-subtle)"><div style="width:35%;height:100%;background:var(--fx-red)"></div></div>
+          </div>
+          <div class="movie-title">Interestelar</div>
+          <div class="movie-genre">35% concluído</div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-poster" style="background:linear-gradient(135deg,#2a1a1a,#4a2a1a)">
+            <div class="poster-img">🐉</div>
+            <div class="poster-rating">⭐ 8.7</div>
+            <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--fx-subtle)"><div style="width:72%;height:100%;background:var(--fx-red)"></div></div>
+          </div>
+          <div class="movie-title">Game of Thrones</div>
+          <div class="movie-genre">72% concluído</div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-poster" style="background:linear-gradient(135deg,#1a1a3a,#0a2a1a)">
+            <div class="poster-img">🕵️</div>
+            <div class="poster-rating">⭐ 8.5</div>
+            <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--fx-subtle)"><div style="width:18%;height:100%;background:var(--fx-red)"></div></div>
+          </div>
+          <div class="movie-title">Sherlock</div>
+          <div class="movie-genre">18% concluído</div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-title">Populares Agora</span>
+        <span class="section-see">Ver tudo</span>
+      </div>
+      <div class="cards-row">
+        <div class="movie-card" onclick="showScreen('details',document.querySelectorAll('.nav-btn')[2])">
+          <div class="movie-poster" style="background:linear-gradient(135deg,#2a0a0a,#4a1a0a)">
+            <div class="poster-img">🔥</div>
+            <div class="poster-rating">⭐ 9.3</div>
+          </div>
+          <div class="movie-title">Oppenheimer</div>
+          <div class="movie-genre">Drama / Hist.</div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-poster" style="background:linear-gradient(135deg,#0a1a2a,#1a0a3a)">
+            <div class="poster-img">🦸</div>
+            <div class="poster-rating">⭐ 8.4</div>
+          </div>
+          <div class="movie-title">Duna: Parte 2</div>
+          <div class="movie-genre">Sci-Fi / Épico</div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-poster" style="background:linear-gradient(135deg,#1a2a0a,#0a2a2a)">
+            <div class="poster-img">👻</div>
+            <div class="poster-rating">⭐ 7.9</div>
+          </div>
+          <div class="movie-title">Midsommar</div>
+          <div class="movie-genre">Terror / Drama</div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-poster" style="background:linear-gradient(135deg,#2a2a0a,#3a1a2a)">
+            <div class="poster-img">🎭</div>
+            <div class="poster-rating">⭐ 8.8</div>
+          </div>
+          <div class="movie-title">Parasite</div>
+          <div class="movie-genre">Thriller</div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-title">Novidades para Você</span>
+        <span class="section-see">Ver tudo</span>
+      </div>
+      <div class="cards-row">
+        <div class="movie-card">
+          <div class="movie-poster" style="background:linear-gradient(135deg,#2a1a3a,#1a2a1a)">
+            <div class="poster-img">🌊</div>
+            <div class="poster-rating">⭐ 8.1</div>
+          </div>
+          <div class="movie-title">Tár</div>
+          <div class="movie-genre">Drama</div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-poster" style="background:linear-gradient(135deg,#3a1a0a,#1a3a1a)">
+            <div class="poster-img">🥊</div>
+            <div class="poster-rating">⭐ 8.6</div>
+          </div>
+          <div class="movie-title">Sisu</div>
+          <div class="movie-genre">Ação</div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-poster" style="background:linear-gradient(135deg,#0a2a3a,#2a0a2a)">
+            <div class="poster-img">🌌</div>
+            <div class="poster-rating">⭐ 9.0</div>
+          </div>
+          <div class="movie-title">Arrival</div>
+          <div class="movie-genre">Sci-Fi</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item active">
+        <div class="nav-icon">🏠</div>
+        <div class="nav-label">Início</div>
+        <div class="nav-dot"></div>
+      </div>
+      <div class="nav-item" onclick="showScreen('search',document.querySelectorAll('.nav-btn')[1])">
+        <div class="nav-icon">🔍</div>
+        <div class="nav-label">Busca</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">📂</div>
+        <div class="nav-label">Minha Lista</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">👤</div>
+        <div class="nav-label">Perfil</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="screen" id="screen-search">
+    <div class="status-bar">
+      <span>09:41</span>
+      <div class="status-icons">
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        <span style="margin-left:4px">🔋</span>
+      </div>
+    </div>
+    <div style="padding:10px 20px 6px;font-size:18px;font-weight:600;color:var(--fx-text);flex-shrink:0">Explorar</div>
+    <div class="search-bar-wrap">
+      <div class="search-wrap-inner">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" placeholder="Filmes, séries, diretores..."/>
+      </div>
+    </div>
+    <div class="genre-chips">
+      <div class="chip sel">Todos</div>
+      <div class="chip">Ação</div>
+      <div class="chip">Drama</div>
+      <div class="chip">Sci-Fi</div>
+      <div class="chip">Terror</div>
+      <div class="chip">Comédia</div>
+      <div class="chip">Doc.</div>
+    </div>
+    <div style="padding:0 20px 8px;font-size:13px;color:var(--fx-muted);flex-shrink:0">Mais buscados</div>
+    <div class="results-grid">
+      <div class="grid-card" onclick="showScreen('details',document.querySelectorAll('.nav-btn')[2])">
+        <div class="grid-poster" style="background:linear-gradient(135deg,#2a0a0a,#4a1a0a)">🔥</div>
+        <div class="grid-title">Oppenheimer</div>
+      </div>
+      <div class="grid-card">
+        <div class="grid-poster" style="background:linear-gradient(135deg,#0a1a2a,#1a0a3a)">🚀</div>
+        <div class="grid-title">Interestelar</div>
+      </div>
+      <div class="grid-card">
+        <div class="grid-poster" style="background:linear-gradient(135deg,#1a2a0a,#0a1a2a)">🌊</div>
+        <div class="grid-title">Duna</div>
+      </div>
+      <div class="grid-card">
+        <div class="grid-poster" style="background:linear-gradient(135deg,#2a1a0a,#3a2a0a)">🎭</div>
+        <div class="grid-title">Parasite</div>
+      </div>
+      <div class="grid-card">
+        <div class="grid-poster" style="background:linear-gradient(135deg,#0a2a2a,#1a0a2a)">🌌</div>
+        <div class="grid-title">Arrival</div>
+      </div>
+      <div class="grid-card">
+        <div class="grid-poster" style="background:linear-gradient(135deg,#2a2a0a,#2a0a2a)">👻</div>
+        <div class="grid-title">Midsommar</div>
+      </div>
+      <div class="grid-card">
+        <div class="grid-poster" style="background:linear-gradient(135deg,#1a0a2a,#2a1a0a)">🐉</div>
+        <div class="grid-title">GOT</div>
+      </div>
+      <div class="grid-card">
+        <div class="grid-poster" style="background:linear-gradient(135deg,#0a0a2a,#2a0a1a)">🕵️</div>
+        <div class="grid-title">Sherlock</div>
+      </div>
+      <div class="grid-card">
+        <div class="grid-poster" style="background:linear-gradient(135deg,#3a0a0a,#1a2a0a)">🥊</div>
+        <div class="grid-title">Sisu</div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="showScreen('home',document.querySelectorAll('.nav-btn')[0])">
+        <div class="nav-icon">🏠</div>
+        <div class="nav-label">Início</div>
+      </div>
+      <div class="nav-item active">
+        <div class="nav-icon">🔍</div>
+        <div class="nav-label">Busca</div>
+        <div class="nav-dot"></div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">📂</div>
+        <div class="nav-label">Minha Lista</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">👤</div>
+        <div class="nav-label">Perfil</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAILS -->
+  <div class="screen" id="screen-details">
+    <div class="detail-hero" style="background:linear-gradient(160deg,#1a0a2e 0%,#2d0a1a 50%,#0a1a2e 100%)">
+      <div class="detail-back" onclick="showScreen('home',document.querySelectorAll('.nav-btn')[0])">←</div>
+      <span style="font-size:70px">🔥</span>
+      <div class="detail-overlay"></div>
+    </div>
+    <div class="detail-body">
+      <div style="margin-bottom:14px">
+        <div class="detail-title">OPPENHEIMER</div>
+        <div class="detail-meta-row">
+          <span class="rating-big">★ 9.3</span>
+          <span class="tag">2023</span>
+          <span class="tag">3h</span>
+          <span class="tag red">18+</span>
+          <span class="tag">Drama</span>
+          <span class="tag">Histórico</span>
+        </div>
+        <button class="btn-play-full" onclick="showScreen('player',document.querySelectorAll('.nav-btn')[3])">
+          ▶ &nbsp;Assistir Agora
+        </button>
+        <button class="btn-list-full">
+          ＋ &nbsp;Adicionar à Minha Lista
+        </button>
+      </div>
+      <p class="detail-desc">
+        A história do físico J. Robert Oppenheimer e seu papel no desenvolvimento da bomba atômica durante a Segunda Guerra Mundial. Um thriller épico que explora os dilemas morais da ciência e do poder.
+      </p>
+      <div class="detail-section">Elenco Principal</div>
+      <div class="cast-row">
+        <div class="cast-item"><div class="cast-avatar">🎭</div><div class="cast-name">C. Murphy</div></div>
+        <div class="cast-item"><div class="cast-avatar">👨</div><div class="cast-name">M. Damon</div></div>
+        <div class="cast-item"><div class="cast-avatar">👩</div><div class="cast-name">E. Blunt</div></div>
+        <div class="cast-item"><div class="cast-avatar">🧔</div><div class="cast-name">R. Downey</div></div>
+        <div class="cast-item"><div class="cast-avatar">👤</div><div class="cast-name">K. Branagh</div></div>
+      </div>
+      <div class="detail-section">Você Também Pode Gostar</div>
+      <div class="cards-row" style="padding:0;margin-bottom:0">
+        <div class="movie-card">
+          <div class="movie-poster" style="background:linear-gradient(135deg,#0a1a2a,#1a0a3a)"><div class="poster-img">🌌</div><div class="poster-rating">⭐ 8.6</div></div>
+          <div class="movie-title">Duna: Parte 2</div>
+          <div class="movie-genre">Sci-Fi</div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-poster" style="background:linear-gradient(135deg,#1a2a0a,#0a2a2a)"><div class="poster-img">🎭</div><div class="poster-rating">⭐ 8.8</div></div>
+          <div class="movie-title">Parasite</div>
+          <div class="movie-genre">Thriller</div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-poster" style="background:linear-gradient(135deg,#2a1a0a,#3a0a0a)"><div class="poster-img">🔬</div><div class="poster-rating">⭐ 8.2</div></div>
+          <div class="movie-title">The Imitation G.</div>
+          <div class="movie-genre">Histórico</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="showScreen('home',document.querySelectorAll('.nav-btn')[0])">
+        <div class="nav-icon">🏠</div><div class="nav-label">Início</div>
+      </div>
+      <div class="nav-item" onclick="showScreen('search',document.querySelectorAll('.nav-btn')[1])">
+        <div class="nav-icon">🔍</div><div class="nav-label">Busca</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">📂</div><div class="nav-label">Minha Lista</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">👤</div><div class="nav-label">Perfil</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLAYER -->
+  <div class="screen" id="screen-player">
+    <div class="player-bg">
+      <div class="player-back" onclick="showScreen('details',document.querySelectorAll('.nav-btn')[2])">←</div>
+      <div class="play-circle">❚❚</div>
+      <div class="player-menu">⋮</div>
+      <div style="position:absolute;bottom:14px;left:20px;font-size:11px;color:rgba(255,255,255,.6)">HD · Legendado</div>
+    </div>
+    <div class="progress-area">
+      <div class="time-row"><span>42:17</span><span>2:00:18 restante</span></div>
+      <div class="progress-bar">
+        <div class="progress-fill"><div class="progress-thumb"></div></div>
+      </div>
+      <div class="player-controls">
+        <div class="ctrl-btn">⟨⟨</div>
+        <div class="ctrl-btn">⏮</div>
+        <div class="ctrl-btn main">❚❚</div>
+        <div class="ctrl-btn">⏭</div>
+        <div class="ctrl-btn">⟩⟩</div>
+      </div>
+    </div>
+    <div class="player-body">
+      <div class="player-title">OPPENHEIMER</div>
+      <div class="player-ep">2023 · Filme · 3h 2m · Christopher Nolan</div>
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <div style="background:var(--fx-card);border:1px solid var(--fx-subtle);border-radius:8px;padding:6px 12px;font-size:11px;color:var(--fx-muted);cursor:pointer">💬 Legendas</div>
+        <div style="background:var(--fx-card);border:1px solid var(--fx-subtle);border-radius:8px;padding:6px 12px;font-size:11px;color:var(--fx-muted);cursor:pointer">🔊 Áudio</div>
+        <div style="background:var(--fx-card);border:1px solid var(--fx-subtle);border-radius:8px;padding:6px 12px;font-size:11px;color:var(--fx-muted);cursor:pointer">📺 Qualidade</div>
+      </div>
+      <div class="ep-section">Próximos da Fila</div>
+      <div class="ep-row">
+        <div class="ep-thumb" style="background:linear-gradient(135deg,#0a1a2a,#1a0a3a)">
+          🌌
+          <div class="ep-playing">▶</div>
+        </div>
+        <div class="ep-info">
+          <div class="ep-title">Duna: Parte 2</div>
+          <div class="ep-duration">2h 46m · Sci-Fi</div>
+          <div class="ep-desc">Paul Atreides lidera os Fremen numa guerra de vingança contra os que destruíram sua família.</div>
+        </div>
+      </div>
+      <div class="ep-row">
+        <div class="ep-thumb" style="background:linear-gradient(135deg,#2a1a0a,#3a0a0a)">🔬</div>
+        <div class="ep-info">
+          <div class="ep-title">The Imitation Game</div>
+          <div class="ep-duration">1h 54m · Histórico</div>
+          <div class="ep-desc">Alan Turing tenta decifrar o código Enigma durante a Segunda Guerra Mundial.</div>
+        </div>
+      </div>
+      <div class="ep-row">
+        <div class="ep-thumb" style="background:linear-gradient(135deg,#1a0a2a,#0a1a1a)">⚡</div>
+        <div class="ep-info">
+          <div class="ep-title">Tesla</div>
+          <div class="ep-duration">2h 2m · Biográfico</div>
+          <div class="ep-desc">A vida do inventor Nikola Tesla e sua rivalidade com Thomas Edison.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+function showScreen(id, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+</script>
